@@ -1,6 +1,6 @@
 fastapi==0.95.2
 uvicorn[standard]==0.22.0
-pillow==10.0.0
+pillow==10.2.0
 easyocr==1.6.2
 indic-transliteration==1.5.5
 requests==2.31.0
