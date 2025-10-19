@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow HTTP (cleartext) for your development server -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.88.226.128</domain>
+        <!-- 👆 Replace this with your laptop's IPv4 address -->
+    </domain-config>
+
+    <!-- Optional: Allow localhost for emulator -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>
