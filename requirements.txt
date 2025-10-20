@@ -2,6 +2,9 @@ fastapi==0.95.2
 uvicorn[standard]==0.22.0
 pillow==10.2.0
 easyocr==1.6.2
+torch==2.2.0+cpu
+torchvision==0.15.2+cpu
+- -f https://download.pytorch.org/whl/cpu/torch_stable.html
 indic-transliteration==1.5.5
 requests==2.31.0
 # Torch CPU wheel will be installed separately on Render via pip, see notes below
