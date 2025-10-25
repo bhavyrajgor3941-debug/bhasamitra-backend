@@ -1,17 +1,15 @@
 package com.example.sihprojectprototypebhasamitra.data
 
-// The problematic import has been removed from here.
-
+import com.example.sihprojectprototypebhasamitra.network.RetrofitClient
+import com.example.sihprojectprototypebhasamitra.network.TranslitResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
-import org.json.JSONObject
 
 object AksharamukhaApiClient {
+
+    // You can keep this client if you use it elsewhere, or remove it if Retrofit
+    // is handling all your networking now. I'll leave it commented out for now.
+    /*
     private val client: OkHttpClient by lazy {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BASIC
@@ -20,40 +18,42 @@ object AksharamukhaApiClient {
             .addInterceptor(logging)
             .build()
     }
+    */
 
     /**
-     * Transliterate text using Aksharamukha public API:
-     * POST https://aksharamukha.appspot.com/api/public
-     * Body: { "source":"Devanagari", "target":"Latin", "text":"..." }
-     *
-     * Returns the API response body string.
+     * Transliterates text using the Retrofit ApiService.
+     * This function now calls the GET endpoint with query parameters.
      */
     suspend fun transliterate(
         source: String,
         target: String,
         text: String
-    ): String = withContext(Dispatchers.IO) {
-        // Build JSON request body
-        val json = JSONObject().apply {
-            put("source", source)
-            put("target", target)
-            put("text", text)
-        }.toString()
+    ): TranslitResponse = withContext(Dispatchers.IO) {
+        try {
+            // =================================================================
+            // THIS IS WHERE YOU APPLY THE CHANGE
+            // =================================================================
 
-        val mediaType = "application/json; charset=utf-8".toMediaType()
-        val requestBody = json.toRequestBody(mediaType)
+            // This is the new, correct GET way using Retrofit
+            val response = RetrofitClient.apiService.transliterateText(
+                source = source,
+                target = target,
+                text = text
+            )
 
-        val request = Request.Builder()
-            .url("https://aksharamukha.appspot.com/api/public")
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) {
-                // include code in the error for easier debugging
-                throw IllegalStateException("HTTP ${response.code}: ${response.message}")
+            if (response.isSuccessful) {
+                // If the call was successful, return the response body.
+                // The elvis operator handles the case where the body might be null.
+                response.body() ?: TranslitResponse(null, null, "Response body was empty.")
+            } else {
+                // If the server returned an error (e.g., 404, 500), create a response with the error message.
+                TranslitResponse(null, null, "Error: ${response.code()} ${response.message()}")
             }
-            response.body?.string() ?: ""
+
+        } catch (e: Exception) {
+            // If there was a network error (e.g., no internet), create a response with the exception message.
+            e.printStackTrace()
+            TranslitResponse(null, null, "Network error: ${e.message}")
         }
     }
 }

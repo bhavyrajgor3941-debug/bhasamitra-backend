@@ -16,7 +16,7 @@ object RetrofitClient {
     private const val BASE_URL = "https://bhasamitra-backend.onrender.com/"
 
     // The lazy-initialized OkHttpClient, configured with a logger and timeouts.
-    private val client: OkHttpClient by lazy {
+    private val okHttpclient: OkHttpClient by lazy {
         // The logging interceptor helps in debugging by showing request and response details.
         val logging = HttpLoggingInterceptor().apply {
             // BODY level provides the most detail.
@@ -31,10 +31,10 @@ object RetrofitClient {
     }
 
     // The lazy-initialized Retrofit instance that uses the OkHttpClient.
-    val api: ApiService by lazy {
+    val apiService: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(client)
+            .client(okHttpclient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
