@@ -132,6 +132,8 @@ async def predict(
     return do_transliteration(detected_text, source_str, target_str)
 
 
-@app.post("/")
-def home():
-    return {"message": "✅ BhashaMitra Transliteration API is running successfully"}
+@app.route('/transliterate', methods=['POST']) # <-- FIX: Explicitly allow POST
+def transliterate_text():
+    data = request.get_json() # Now you can receive the POST body
+    # ... your logic using data['text'], etc.
+return {"message": "✅ BhashaMitra Transliteration API is running successfully"}
