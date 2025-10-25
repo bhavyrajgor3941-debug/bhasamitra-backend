@@ -28,13 +28,10 @@ SCRIPT_MAP = {
     "Latin": IAST,
 }
 
-# Initialize EasyOCR reader once (languages you used before)
-# This can be slow on first import; keep it global to reuse the model.
+# Initialize EasyOCR reader once
 try:
     reader = easyocr.Reader(['hi', 'gu', 'bn', 'ta', 'te', 'ml', 'mr', 'kn'], gpu=False)
 except Exception as e:
-    # If EasyOCR fails to initialize (e.g., missing torch in environment),
-    # set reader = None and return helpful error in /predict.
     reader = None
     print("EasyOCR initialization error:", e)
 
@@ -68,9 +65,10 @@ def do_transliteration(text: str, source_str: str, target_str: str):
         "transliterated_text": transliterated_text
     }
 
-
+# This is your correct, working endpoint for transliteration.
+# It correctly accepts POST requests with a JSON body.
 @app.post("/transliterate")
-async def transliterate_text(request: Request):
+async def transliterate_text_endpoint(request: Request):
     """
     Existing JSON-based transliteration endpoint.
     Expects JSON body: { "text": "...", "source": "Devanagari", "target": "Latin" }
@@ -93,47 +91,34 @@ async def predict(
         target: Optional[str] = Form(None)
 ):
     """
-    Accepts multipart/form-data:
-      - file: image file (required if no 'text' form field)
-      - source: optional string like "Devanagari", "Gujarati"
-      - target: optional string like "Latin" or "IAST"
-
-    Behavior:
-      - If file provided: run OCR to get text, then transliterate.
-      - If file not provided: returns an error (or you could accept text field instead).
+    Accepts multipart/form-data for OCR and transliteration.
     """
-    # If client didn't send a file, return helpful error
     if file is None:
         return {"error": "Please upload an image file in the 'file' field."}
 
-    # Ensure EasyOCR is available
     if reader is None:
         return {"error": "OCR engine not available on server (EasyOCR initialization failed)."}
 
-    # Read file bytes and make PIL image
     try:
         contents = await file.read()
         image = Image.open(io.BytesIO(contents)).convert("RGB")
     except Exception as e:
         return {"error": f"Failed to read uploaded image: {str(e)}"}
 
-    # Run EasyOCR (detail=0 returns plain strings)
     try:
         ocr_result = reader.readtext(image, detail=0)
         detected_text = " ".join(ocr_result).strip()
     except Exception as e:
         return {"error": f"OCR failed: {str(e)}"}
 
-    # If no source/target provided, pick defaults (assume Devanagari -> Latin)
     source_str = source or "Devanagari"
     target_str = target or "Latin"
 
-    # Transliterate using the helper
     return do_transliteration(detected_text, source_str, target_str)
 
+# --- FIX: THE ENTIRE INVALID BLOCK BELOW HAS BEEN REMOVED ---
 
-@app.route('/transliterate', methods=['POST']) # <-- FIX: Explicitly allow POST
-def transliterate_text():
-    data = request.get_json() # Now you can receive the POST body
-    # ... your logic using data['text'], etc.
-return {"message": "✅ BhashaMitra Transliteration API is running successfully"}
+# Add a root endpoint for health checks
+@app.get("/")
+def read_root():
+    return {"message": "✅ BhashaMitra Transliteration API is running successfully"}
