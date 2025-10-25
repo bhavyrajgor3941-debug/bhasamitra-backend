@@ -3,7 +3,7 @@ package com.example.sihprojectprototypebhasamitra.network
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
-import retrofit2.http.POST
+import retrofit2.http.GET
 import retrofit2.http.Body
 
 data class TranslitResponse(
@@ -13,7 +13,7 @@ data class TranslitResponse(
 )
 
 interface ApiService {
-    @POST("/transliterate")
+    @GET("/transliterate")
     suspend fun transliterateText(
         @Body requestBody: RequestBody
     ): Response<TranslitResponse>
