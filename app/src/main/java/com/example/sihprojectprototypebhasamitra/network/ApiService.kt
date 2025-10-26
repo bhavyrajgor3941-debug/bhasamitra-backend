@@ -1,11 +1,19 @@
+// In your ApiService.kt
+
 package com.example.sihprojectprototypebhasamitra.network
 
-// You don't need these okhttp3 imports here anymore
-// import okhttp3.MultipartBody
-// import okhttp3.RequestBody
+import com.example.sihprojectprototypebhasamitra.data.TransliterationRequest
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Query // <-- FIX 1: Import @Query
+// FIX: Add back the POST and Body imports
+import retrofit2.http.Body
+import retrofit2.http.POST
+
+// This data class is used to structure the JSON body for the POST request
+data class TranslitRequest(
+    val source: String,
+    val target: String,
+    val text: String
+)
 
 data class TranslitResponse(
     val detected_text: String?,
@@ -14,11 +22,10 @@ data class TranslitResponse(
 )
 
 interface ApiService {
-    @GET("transliterate") // Endpoint path can be relative
+    // FIX: Change @GET back to @POST
+    @POST("transliterate")
     suspend fun transliterateText(
-        // FIX 2: Use @Query for each parameter instead of @Body
-        @Query("source") source: String,
-        @Query("target") target: String,
-        @Query("text") text: String
+        // FIX: Change @Query parameters back to a single @Body object
+        @Body request: TransliterationRequest
     ): Response<TranslitResponse>
 }
