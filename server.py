@@ -36,7 +36,7 @@ class ImageRequest(BaseModel):
 def root():
     return {"message": "BhashaMitra OCR+Transliteration API running"}
 
-@app.post("/transliterate")
+@app.get("/transliterate")
 def transliterate_endpoint(req: ImageRequest):
     try:
         img_bytes = base64.b64decode(req.image)
