@@ -2,9 +2,7 @@
 
 package com.example.sihprojectprototypebhasamitra.network
 
-import com.example.sihprojectprototypebhasamitra.data.TransliterationRequest
 import retrofit2.Response
-// FIX: Add back the POST and Body imports
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -22,10 +20,8 @@ data class TranslitResponse(
 )
 
 interface ApiService {
-    // FIX: Change @GET back to @POST
     @POST("transliterate")
     suspend fun transliterateText(
-        // FIX: Change @Query parameters back to a single @Body object
-        @Body request: TransliterationRequest
+        @Body request: TranslitRequest
     ): Response<TranslitResponse>
 }

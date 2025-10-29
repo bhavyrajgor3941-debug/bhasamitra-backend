@@ -1,6 +1,7 @@
 package com.example.sihprojectprototypebhasamitra.data
 
 import com.example.sihprojectprototypebhasamitra.network.RetrofitClient
+import com.example.sihprojectprototypebhasamitra.network.TranslitRequest
 import com.example.sihprojectprototypebhasamitra.network.TranslitResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,10 +14,8 @@ object AksharamukhaApiClient {
                                       text: String
     ): TranslitResponse = withContext(Dispatchers.IO) {
         try {
-            // FIX: Create the request body object
-            val requestBody = TransliterationRequest(source = source, target = target, text = text)
+            val requestBody = TranslitRequest(source = source, target = target, text = text)
 
-            // FIX: Call the POST method with the request body
             val response = RetrofitClient.apiService.transliterateText(requestBody)
 
             if (response.isSuccessful) {
@@ -30,4 +29,3 @@ object AksharamukhaApiClient {
         }
     }
 }
-
