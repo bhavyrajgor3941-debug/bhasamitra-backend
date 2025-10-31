@@ -119,6 +119,6 @@ async def predict(
 # --- FIX: THE ENTIRE INVALID BLOCK BELOW HAS BEEN REMOVED ---
 
 # Add a root endpoint for health checks
-@app.get("/")
+@app.post("/")
 def read_root():
     return {"message": "✅ BhashaMitra Transliteration API is running successfully"}
