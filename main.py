@@ -54,7 +54,7 @@ async def transliterate_text(request: Request):
     except Exception as e:
         return {"error": f"An unexpected error occurred: {str(e)}"}
 
-@app.get("/")
+@app.post("/")
 def home():
     return {"message": "✅ BhashaMitra Transliteration API is running successfully"}
 
